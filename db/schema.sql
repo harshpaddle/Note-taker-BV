@@ -1,14 +1,12 @@
-DROP DATABASE IF EXISTS restaurant_db;
-CREATE DATABASE restaurant_db;
-USE restaurant_db;
+DROP DATABASE IF EXISTS notes_db;
+CREATE DATABASE notes_db;
+USE notes_db;
 
--- Create the tables table
-CREATE TABLE tables
+-- Create the notes table
+CREATE TABLE notes
 (
   id INT NOT NULL AUTO_INCREMENT,
-  name VARCHAR (255) NOT NULL,
-  email VARCHAR (255) NOT NULL,
-  phone VARCHAR (255) NOT NULL,
-  isWaiting BOOLEAN DEFAULT FALSE,
+  title VARCHAR (255) NOT NULL,
+  email TEXT NOT NULL,
   PRIMARY KEY(id)
 );
