@@ -1,19 +1,25 @@
 const express = require('express');
 const mysql = require("mysql");
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const path = require("path");
 
 var app = express();
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
-var connection = mysql.createConnection({
-  port: 3306,
-  host: "localhost",
-  user: "root",
-  password: "root1234",
-  database: "notes_db"
-});
+var connection;
+
+if (process.env.JAWSDB_URL) {
+  connection = mysql.createConnection(process.env.JAWSDB_URL);
+} else {
+    connection = mysql.createConnection({
+    port: 3306,
+    host: "localhost",
+    user: "root",
+    password: "root1234",
+    database: "notes_db"
+  });
+};
 
 app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "home.html"))
