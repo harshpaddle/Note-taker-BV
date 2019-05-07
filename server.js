@@ -1,71 +1,63 @@
-var express = require("express");
-var path = require("path");
-var connection = require("../db/connection");
+const express = require('express');
+const mysql = require("mysql");
+const PORT = 3000;
+const path = require("path");
 
-// Tells node that we are creating an "express" server
 var app = express();
-// Sets an initial port. We"ll use this later in our listener
-var PORT = process.env.PORT || 3000;
-
-// Sets up the Express app to handle data parsing
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
-// Get all tables that aren't waiting
-app.get("/api/tables", function(req, res) {
-  connection.query("SELECT * FROM tables WHERE isWaiting = FALSE", function(err, dbTables) {
-    res.json(dbTables);
-  });
+var connection = mysql.createConnection({
+  port: 3306,
+  host: "localhost",
+  user: "root",
+  password: "root1234",
+  database: "notes_db"
 });
 
-// Save a new table
-// Set isWaiting to true if there are already 5 or more "seated" tables
-app.post("/api/tables", function(req, res) {
-  connection.query("SELECT COUNT(IF(isWaiting = FALSE, 1, NULL)) 'count' FROM tables", function(err, dbSeated) {
+app.get("/", function (req, res) {
+  res.sendFile(path.join(__dirname, "home.html"))
+});
+
+app.get("/notes", function (req, res) {
+  res.sendFile(path.join(__dirname, "notes.html"))
+});
+
+app.get("/api/notes", function (req, res) {
+  connection.query("SELECT * FROM notes", function (err, notesData) {
     if (err) throw err;
-
-    if (dbSeated[0].count > 4) {
-      req.body.isWaiting = true;
-    }
-
-    connection.query("INSERT INTO tables SET ?", req.body, function(err, result) {
-      if (err) throw err;
-
-      res.json(result);
-    });
+    res.json(notesData)
   });
 });
 
-// Get all tables where isWaiting is true (waiting list)
-app.get("/api/waitlist", function(req, res) {
-  connection.query("SELECT * FROM tables WHERE isWaiting = TRUE", function(err, dbTables) {
-    res.json(dbTables);
-  });
-});
-
-// Clear all tables
-app.delete("/api/tables", function(req, res) {
-  connection.query("DELETE FROM tables", function(err, result) {
-    if (err) throw err;
+app.get("/api/notes/:selected", function (req, res) {
+  connection.query("SELECT * FROM notes where id = ?", [req.params.selected], function (err, result) {
+    if (err) throw error;
     res.json(result);
-  });
+  })
+})
+
+app.post("/api/newNote", function (req, res) {
+  connection.query("INSERT INTO notes SET ? ", req.body, function (err, result) {
+    if (err) throw error;
+    res.json(result);
+  })
 });
 
-// Render tables.html at the "/tables" path
-app.get("/tables", function(req, res) {
-  res.sendFile(path.join(__dirname, "../public/tables.html"));
-});
+app.delete("/api/notes/:selected", function (req, res) {
+  connection.query("DELETE FROM notes where id = ?", [req.params.selected], function (err, result) {
+    if (err) throw error;
 
-// Render reserve.html at the "/reserve" path
-app.get("/reserve", function(req, res) {
-  res.sendFile(path.join(__dirname, "../public/reserve.html"));
-});
+    res.json(result);
+  })
+})
 
-// All other paths serve the home.html page
-app.get("*", function(req, res) {
-  res.sendFile(path.join(__dirname, "../public/home.html"));
-});
+// app.delete("/api/deleteNote", function (req, res) {
+//   connection.query("DELETE FROM notes where id = ?", req.body, function (err, result) {
+//     if (err) throw error;
+//     res.json(result);
+//   })
+// })
 
-app.listen(PORT, function() {
-  console.log("App listening on PORT: " + PORT);
-});
+app.listen(PORT, () => console.log("now live on localhost" + PORT));
+

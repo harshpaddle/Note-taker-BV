@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>notes</title>
+</head>
+
+<body>
+  <nav class="navbar navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">Note Taker
+    </a>
+    <div class="icons">
+      <i class="fas fa-save text-light save-note"></i>
+      <i class="fas fa-pen text-light new-note"></i>
+    </div>
+  </nav>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-5 list-container">
+        <div class="card">
+          <ul class="list-group">
+          </ul>
+        </div>
+      </div>
+      <div class="col-7">
+        <input style="width: 80%" class="note-title m-4 p-2" placeholder="Note Title" maxlength="28" type="text">
+        <textarea style="width: 80%" class="note-textarea m-4 p-4" placeholder="Note Text"></textarea>
+        <br>
+        <button class="ml-4" id="saveNote">Add note</button>
+      </div>
+    </div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script>
+  </script>
+  <script>
+    var renderNotes = function () {
+
+      $(".list-group").empty();
+      $.ajax({
+        url: "/api/notes",
+        method: "GET"
+      }).then(function (data) {
+        for (var i = 0; i < data.length; i++) {
+          var $li = $("<li class='list-group-item p-4 text-large'>");
+          $li.append("Title: ", data[i].title);
+
+          var viewButton = $("<button>").html(`view`)
+            .addClass("btn btn-small btn-primary float-right viewNote")
+            .attr("data-id", `${data[i].id}`);
+
+          var delButton = $("<button>").html(`delete`)
+            .addClass("btn btn-small btn-danger float-right deleteNote")
+            .attr("data-id", `${data[i].id}`);
+          // .attr("id", `${data[i].id}`);
+          // .attr("data-id", data[i].id);
+
+
+
+          $li.append(delButton);
+          $li.append(viewButton);
+
+          $(".list-group").append($li);
+        }
+      });
+    };
+
+    renderNotes();
+
+
+    var createNote = function (event) {
+      event.preventDefault();
+
+      var newNote = {
+        title: $(".note-title").val().trim(),
+        body: $(".note-textarea").val().trim()
+      };
+      $.ajax({
+        url: "/api/newNote",
+        method: "POST",
+        data: newNote
+      }).then(function (data) {
+        if (data) {
+          renderNotes();
+          $(".note-title").val("");
+          $(".note-textarea").val("");
+        }
+      })
+    };
+
+    $("#saveNote").on("click", createNote);
+
+
+    $(document).on("click", ".viewNote", function (event) {
+      event.preventDefault();
+      var renderId = $(this).attr("data-id");
+      $.ajax({
+        url: `/api/notes/${renderId}`,
+        method: "GET"
+      }).then(function (data) {
+        if (data) {
+          $(".note-title").val(data[0].title);
+          $(".note-textarea").val(data[0].body);
+        }
+      });
+    });
+
+
+    $(document).on("click", ".deleteNote", function (event) {
+      event.preventDefault();
+      var deleteId = $(this).attr("data-id");
+      $.ajax({
+        url: `/api/notes/${deleteId}`,
+        method: "DELETE",
+      }).then(function (data) {
+        // location.reload()
+        if (data) {
+          renderNotes();
+        }
+      })
+    })
+
+
+  </script>
+</body>
+
+</html>
