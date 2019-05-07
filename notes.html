@@ -7,32 +7,34 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
-  <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+  <link rel="stylesheet" type="text/css" href="style.css">
   <title>notes</title>
 </head>
 
 <body>
-  <nav class="navbar navbar-dark bg-dark">
+  <nav style="background-color: #18BC9C;" class="navbar navbar-dark">
     <a class="navbar-brand" href="/">Note Taker
     </a>
-    <div class="icons">
-      <i class="fas fa-save text-light save-note"></i>
-      <i class="fas fa-pen text-light new-note"></i>
-    </div>
+
   </nav>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-5 list-container">
-        <div class="card">
+      <div class="ml-3 col-sm-12 col-md-5 list-container">
+        <div class="card mt-4" style="border-color: #18BC9C">
           <ul class="list-group">
           </ul>
         </div>
       </div>
-      <div class="col-7">
-        <input style="width: 80%" class="note-title m-4 p-2" placeholder="Note Title" maxlength="28" type="text">
-        <textarea style="width: 80%" class="note-textarea m-4 p-4" placeholder="Note Text"></textarea>
+      <div class="col-sm-12 col-md-6 input-part">
+
+        <input style="width: 80%; height: 90px; font-size: large; font-weight: bold; border-color: #18BC9C"
+          class="note-title text-center m-4 p-2" placeholder="Note Title" maxlength="28" size="350" type="text">
+        <textarea style="width: 80%; height: 250px; border-radius: 10px;" class="note-textarea m-4 p-4 border-warning"
+          placeholder="Enter Text Here"></textarea>
         <br>
-        <button class="ml-4" id="saveNote">Add note</button>
+        <button class="ml-4 btn btn-medium btn-success" id="saveNote">Add note</button>
+        <button class="ml-4 btn btn-medium btn-success disabled" id="newNote">New note</button>
+        
       </div>
     </div>
   </div>
@@ -42,31 +44,31 @@
   <script>
   </script>
   <script>
-    var renderNotes = function () {
 
+    
+    
+    var renderNotes = function () {
       $(".list-group").empty();
       $.ajax({
         url: "/api/notes",
         method: "GET"
       }).then(function (data) {
         for (var i = 0; i < data.length; i++) {
-          var $li = $("<li class='list-group-item p-4 text-large'>");
-          $li.append("Title: ", data[i].title);
 
-          var viewButton = $("<button>").html(`view`)
-            .addClass("btn btn-small btn-primary float-right viewNote")
+          // create a list item for each note
+          var $li = $(`<li  class='list-group-item list-group-item-action list-group-item-light p-1 text-large' data-id=${data[i].id} id='li' >`);
+
+          $li
+            .append("Note Title: <br> " + `<br> <h4> <em> <b> &nbsp &nbsp ${data[i].title} </b> </em> </h4>`)
+            .attr("style", "cursor: pointer; border-color: #18BC9C");
+
+
+          var delButton = $("<button>").html(`<i class="fas fa-trash-alt float-right text-danger delete-note"></i>`)
+            .addClass("btn btn-large badge badge-large badge-pill float-right deleteNote p-2")
+            .attr("style", "width: 20px;")
             .attr("data-id", `${data[i].id}`);
-
-          var delButton = $("<button>").html(`delete`)
-            .addClass("btn btn-small btn-danger float-right deleteNote")
-            .attr("data-id", `${data[i].id}`);
-          // .attr("id", `${data[i].id}`);
-          // .attr("data-id", data[i].id);
-
-
 
           $li.append(delButton);
-          $li.append(viewButton);
 
           $(".list-group").append($li);
         }
@@ -78,6 +80,12 @@
 
     var createNote = function (event) {
       event.preventDefault();
+
+      if ($(".note-title").empty()) {
+        return alert("note title cannot be empty")
+      } else if ($(".note-textarea").empty()) {
+        return alert("note body cannot be empty")
+      }
 
       var newNote = {
         title: $(".note-title").val().trim(),
@@ -99,7 +107,7 @@
     $("#saveNote").on("click", createNote);
 
 
-    $(document).on("click", ".viewNote", function (event) {
+    $(document).on("click", "#li", function (event) {
       event.preventDefault();
       var renderId = $(this).attr("data-id");
       $.ajax({
@@ -109,10 +117,24 @@
         if (data) {
           $(".note-title").val(data[0].title);
           $(".note-textarea").val(data[0].body);
+          $("#saveNote").addClass("disabled");
+          $("#newNote").removeClass("disabled");
         }
       });
     });
 
+    $("#newNote").on("click", function() {
+      renderNotes();
+      $(".note-title").val("");
+      $(".note-textarea").val("");
+      $("#saveNote").removeClass("disabled")
+      $("#newNote").addClass("disabled");
+    })
+
+
+
+
+    // deleting a not-----------
 
     $(document).on("click", ".deleteNote", function (event) {
       event.preventDefault();
