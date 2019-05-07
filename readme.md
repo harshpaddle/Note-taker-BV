@@ -20,11 +20,11 @@ The goal was to create an app to create, read, delete, and store notes using Jav
 
 1. The home page (https://note-taker-mac.herokuapp.com/)
     Click the Start App button to go see previous notes or create new ones.
-    ![Home Page]() 
+    ![Home Page](https://github.com/harshpaddle/Note-taker-BV/blob/master/assets/images/Screen%20Shot%202019-05-07%20at%202.09.04%20PM.png) 
 
 
 2. The notes page (https://note-taker-mac.herokuapp.com/notes)
-    ![Notes Page]() 
+    ![Notes Page](https://github.com/harshpaddle/Note-taker-BV/blob/master/assets/images/Screen%20Shot%202019-05-07%20at%202.14.15%20PM.png) 
 
 
     * Read:
