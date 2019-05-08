@@ -1,6 +1,6 @@
 # Noter-Taker
 
-The goal was to create an app to create, read, delete, and store notes using Javascript, Node.js and MySQL without the browser refreshing.
+The goal for this was to clone the mac's note taker as practice. Basically this app creates, views and delete notes without refreshing the page. Cool thing about that is the data is persisted on an online database meaning notes persist and reload even after the end of each session.
 
 ## App hosted on Heroku 
 
