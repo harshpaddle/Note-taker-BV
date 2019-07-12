@@ -7,6 +7,8 @@ var app = express();
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
+// app.use(express.static(__dirname + '/public'));
+
 var connection;
 
 if (process.env.JAWSDB_URL) {
@@ -45,7 +47,7 @@ app.get("/api/notes/:selected", function (req, res) {
 
 app.post("/api/newNote", function (req, res) {
   connection.query("INSERT INTO notes SET ? ", req.body, function (err, result) {
-    if (err) throw error;
+    if (err) throw err;
     res.json(result);
   })
 });

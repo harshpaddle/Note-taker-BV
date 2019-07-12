@@ -7,8 +7,8 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css">
-  <link rel="stylesheet" type="text/css" href="style.css">
-  <title>notes</title>
+  <link rel="stylesheet" href="./style.css">
+  <!-- <title>notes</title> -->
 </head>
 
 <body>
@@ -81,16 +81,20 @@
     var createNote = function (event) {
       event.preventDefault();
 
-      if ($(".note-title").empty()) {
+      if ($(".note-title").val() === "") {
         return alert("note title cannot be empty")
-      } else if ($(".note-textarea").empty()) {
-        return alert("note body cannot be empty")
-      }
+      } 
+      // else if ($(".note-textarea").empty()) {
+      //   return alert("note body cannot be empty")
+      // }
 
       var newNote = {
         title: $(".note-title").val().trim(),
-        body: $(".note-textarea").val().trim()
+        textarea: $(".note-textarea").val().trim()
       };
+
+      console.log(newNote);
+      
       $.ajax({
         url: "/api/newNote",
         method: "POST",
@@ -116,7 +120,7 @@
       }).then(function (data) {
         if (data) {
           $(".note-title").val(data[0].title);
-          $(".note-textarea").val(data[0].body);
+          $(".note-textarea").val(data[0].textarea);
           $("#saveNote").addClass("disabled");
           $("#newNote").removeClass("disabled");
         }
