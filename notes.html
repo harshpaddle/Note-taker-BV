@@ -83,10 +83,9 @@
 
       if ($(".note-title").val() === "") {
         return alert("note title cannot be empty")
-      } 
-      // else if ($(".note-textarea").empty()) {
-      //   return alert("note body cannot be empty")
-      // }
+      } else if ($(".note-textarea").val() === "") {
+        return alert("note body cannot be empty")
+      }
 
       var newNote = {
         title: $(".note-title").val().trim(),
