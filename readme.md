@@ -1,6 +1,6 @@
-# Noter-Taker
+# Note-Taker
 
-The goal for this was to clone the mac's note taker as practice. Basically this app creates, views and delete notes without refreshing the page. Cool thing about that is the data is persisted on an online database meaning notes persist and reload even after the end of each session.
+The goal for this project was to clone the mac's note taker as practice. Basically this app creates, views and delete notes without refreshing the page. Cool thing about that is the data is persisted on an online database meaning notes persist and reload even after the end of each session.
 
 ## App hosted on Heroku 
 
